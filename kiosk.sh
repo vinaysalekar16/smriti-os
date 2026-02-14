@@ -18,9 +18,11 @@ sleep 1
 # ---------------- START REMOTE ENGINE ----------------
 python3 /home/vinay/remote_engine.py &
 
+python3 /home/vinay/smriti-os/update_server.py &
 
 # Wait for audio before launching browser
 /home/vinay/wait_audio.sh
+
 
 # ---------------- URLS ----------------
 URL_HOME="file:///home/vinay/index.html"

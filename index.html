@@ -89,6 +89,18 @@
         .indicator { width: 14px; height: 14px; border-radius: 50%; display: inline-block; margin-right: 10px; }
         .online { background: var(--online); box-shadow: 0 0 15px var(--online); }
         .offline { background: var(--offline); box-shadow: 0 0 15px var(--offline); }
+    
+        #updateBtn{
+          position: fixed;
+          bottom: 10px;
+          left: 10px;
+          opacity: 0.15;
+          background: black;
+          color: white;
+          border: none;
+          padding: 6px 10px;
+          font-size: 12px;
+        }
     </style>
 </head>
 
@@ -104,6 +116,8 @@
         <div>
             <h1>SMRITI</h1>
             <small>Smart Media & Responsive Interactive TV Interface</small>
+            <!-- Hidden OTA Update Button -->
+            <button id="updateBtn" onclick="triggerUpdate()">Update</button>
         </div>
         <div id="clock" class="clock">00:00</div>
     </header>
@@ -213,6 +227,12 @@
         } catch (e) { document.getElementById("ip-text").innerText = "IP: UNKNOWN"; }
     }
     getIP();
+
+    function triggerUpdate(){
+        fetch("http://localhost:5000/update");
+        alert("Checking for updates...");
+    }
+
 </script>
 
 </body>
