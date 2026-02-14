@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SMRITI OS</title>
+    <style>
+        :root {
+            --accent: #d4af37;
+            --bg: #0a0a0b;
+            --surface: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+            --online: #00ff88;
+            --offline: #ff3333;
+        }
+
+        * { cursor: none !important; user-select: none !important; outline: none; }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100vw; height: 100vh;
+            background: var(--bg);
+            color: #fff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Splash - Scaled Up */
+        #splash {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: transform 1.2s cubic-bezier(0.8, 0, 0.2, 1);
+        }
+        .splash-title { font-size: 8rem; letter-spacing: 25px; font-weight: bold; } /* Increased from 5rem */
+        .full-form { font-size: 1.5rem; letter-spacing: 6px; color: var(--accent); margin-top: 30px; text-transform: uppercase; } /* Increased from 0.8rem */
+
+        /* Dashboard */
+        #dashboard {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 60px 80px;
+            box-sizing: border-box;
+            justify-content: space-between;
+        }
+
+        header { display: flex; justify-content: space-between; align-items: flex-start; }
+        
+        /* Main Branding Increased */
+        h1 { margin: 0; font-size: 4rem; letter-spacing: 12px; font-weight: bold; color: #fff; } 
+        header small { display: block; font-size: 1.2rem; opacity: 0.5; letter-spacing: 3px; margin-top: 5px; } 
+        
+        /* Clock kept at 4rem as requested */
+        .clock { font-size: 4rem; font-weight: 100; line-height: 1; color: var(--accent); }
+
+        .app-container {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Card sizes kept as requested */
+        .card {
+            width: 320px;
+            height: 200px;
+            background: var(--surface);
+            border: 3px solid var(--border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .logo-img { width: 200px; height: 100px; object-fit: contain; margin-bottom: 10px; }
+        .card span { font-size: 0.9rem; letter-spacing: 2px; opacity: 0.6; }
+
+        /* Footer Info Scaled Up */
+        footer { font-size: 1.2rem; opacity: .7; display: flex; justify-content: space-between; letter-spacing: 2px; border-top: 1px solid var(--border); padding-top: 20px; }
+        .status-group { display: flex; align-items: center; gap: 30px; }
+        
+        .indicator { width: 14px; height: 14px; border-radius: 50%; display: inline-block; margin-right: 10px; }
+        .online { background: var(--online); box-shadow: 0 0 15px var(--online); }
+        .offline { background: var(--offline); box-shadow: 0 0 15px var(--offline); }
+    </style>
+</head>
+
+<body>
+
+<div id="splash">
+    <div class="splash-title">SMRITI</div>
+    <div class="full-form">Smart Media & Responsive Interactive TV Interface</div>
+</div>
+
+<div id="dashboard">
+    <header>
+        <div>
+            <h1>SMRITI</h1>
+            <small>Smart Media & Responsive Interactive TV Interface</small>
+        </div>
+        <div id="clock" class="clock">00:00</div>
+    </header>
+
+    <div class="app-container">
+        <div class="card" id="card-0" onclick="openHotstar()">
+            <img src="https://media.licdn.com/dms/image/v2/D5612AQGZi7qw1JuwNQ/article-cover_image-shrink_720_1280/B56ZUE69FCHEAI-/0/1739544319212?e=2147483647&v=beta&t=HS8J8LBheelhH-13H6n7c8iZ85_LXYen-uQ_-iifdwg" class="logo-img">
+            <span>HOTSTAR</span>
+        </div>
+
+        <div class="card" id="card-1" onclick="openYouTube()">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" class="logo-img">
+            <span>YOUTUBE</span>
+        </div>
+    </div>
+
+    <footer>
+        <div>SMRITI OS v1.0 • BY VINAY</div>
+        <div class="status-group">
+            <span id="ip-text">IP: FETCHING...</span>
+            <div>
+                <span id="status-dot" class="indicator offline"></span>
+                <span id="status-text">OFFLINE</span>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<script>
+    // Clock Logic
+    const clockDisplay = document.getElementById("clock");
+    function updateClock() {
+        const now = new Date();
+        clockDisplay.innerText = now.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit', hour12: false});
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Network Status Logic
+    const statusDot = document.getElementById("status-dot");
+    const statusText = document.getElementById("status-text");
+    function updateStatus() {
+        const online = navigator.onLine;
+        statusDot.className = online ? "indicator online" : "indicator offline";
+        statusText.innerText = online ? "ONLINE" : "OFFLINE";
+    }
+    window.addEventListener('online', updateStatus);
+    window.addEventListener('offline', updateStatus);
+    updateStatus();
+
+    // Navigation Logic
+    const cards = document.querySelectorAll(".card");
+    let currentIndex = 0;
+
+    function highlightCard() {
+        cards.forEach((card, i) => {
+            if (i === currentIndex) {
+                card.style.borderColor = "var(--accent)";
+                card.style.transform = "scale(1.15)"; // Slightly more pop for TV visibility
+                card.style.background = "rgba(255,255,255,0.08)";
+            } else {
+                card.style.borderColor = "var(--border)";
+                card.style.transform = "scale(1)";
+                card.style.background = "var(--surface)";
+            }
+        });
+    }
+
+    function openHotstar() { window.location.href = "https://www.hotstar.com/in"; }
+    function openYouTube() { window.location.href = "https://www.youtube.com/tv"; }
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") {
+            currentIndex = (currentIndex + 1) % cards.length;
+            highlightCard();
+        } else if (e.key === "ArrowLeft") {
+            currentIndex = (currentIndex - 1 + cards.length) % cards.length;
+            highlightCard();
+        } else if (e.key === "Enter") {
+            console.log("Enter pressed on index:", currentIndex); // Add this to debug
+            if (currentIndex === 0) openHotstar();
+            if (currentIndex === 1) openYouTube();
+        }
+    });
+
+    // Splash Screen Timeout
+    window.onload = () => {
+        setTimeout(() => {
+            const splash = document.getElementById("splash");
+            splash.style.transform = "translateY(-100%)";
+            highlightCard(); 
+        }, 3000);
+    };
+
+    // IP Address Logic
+    async function getIP() {
+        try {
+            const pc = new RTCPeerConnection({iceServers: []});
+            pc.createDataChannel("");
+            pc.createOffer().then(offer => pc.setLocalDescription(offer));
+            pc.onicecandidate = (ice) => {
+                if (!ice || !ice.candidate) return;
+                const ip = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(ice.candidate.candidate)[1];
+                document.getElementById("ip-text").innerText = "IP: " + ip;
+                pc.onicecandidate = null;
+            };
+        } catch (e) { document.getElementById("ip-text").innerText = "IP: UNKNOWN"; }
+    }
+    getIP();
+</script>
+
+</body>
+</html>
